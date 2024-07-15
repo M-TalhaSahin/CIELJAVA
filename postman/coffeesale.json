@@ -1,0 +1,170 @@
+{
+	"info": {
+		"name": "Coffee Sale Controller Collection",
+		"description": "Collection for CoffeeSaleController API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get All Coffee Sales",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/coffee-sales",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"coffee-sales"
+					]
+				}
+			}
+		},
+		{
+			"name": "Get Coffee Sales By User ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/coffee-sales/by-user/{userId}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"coffee-sales",
+						"by-user",
+						"{userId}"
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "",
+							"description": ""
+						}
+					]
+				}
+			}
+		},
+		{
+			"name": "Get Coffee Sale By ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/coffee-sales/{coffeeSaleId}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"coffee-sales",
+						"{coffeeSaleId}"
+					],
+					"variable": [
+						{
+							"key": "coffeeSaleId",
+							"value": "",
+							"description": ""
+						}
+					]
+				}
+			}
+		},
+		{
+			"name": "Create Coffee Sale",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user\": {\n        \"id\": 1\n    },\n    \"coffee\": {\n        \"id\": 1\n    },\n    \"brew\": {\n        \"id\": 1\n    }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/coffee-sales",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"coffee-sales"
+					]
+				}
+			}
+		},
+		{
+			"name": "Update Coffee Sale",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user\": {\n        \"id\": 1\n    },\n    \"coffee\": {\n        \"id\": 1\n    },\n    \"brew\": {\n        \"id\": 1\n    }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/coffee-sales/{coffeeSaleId}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"coffee-sales",
+						"{coffeeSaleId}"
+					],
+					"variable": [
+						{
+							"key": "coffeeSaleId",
+							"value": "",
+							"description": ""
+						}
+					]
+				}
+			}
+		},
+		{
+			"name": "Delete Coffee Sale",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/coffee-sales/{coffeeSaleId}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"coffee-sales",
+						"{coffeeSaleId}"
+					],
+					"variable": [
+						{
+							"key": "coffeeSaleId",
+							"value": "",
+							"description": ""
+						}
+					]
+				}
+			}
+		}
+	]
+}
