@@ -2,6 +2,8 @@ package com.example.postgresdemo.controller;
 
 import com.example.postgresdemo.exception.ResourceNotFoundException;
 import com.example.postgresdemo.model.User;
+import com.example.postgresdemo.model.UserLoyalty;
+import com.example.postgresdemo.repository.UserLoyaltyRepository;
 import com.example.postgresdemo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,9 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserLoyaltyRepository userLoyaltyRepository;
+
     @GetMapping
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -30,7 +35,11 @@ public class UserController {
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-        return userRepository.save(user);
+        User createdUser = userRepository.save(user);
+        UserLoyalty userLoyalty = new UserLoyalty();
+        userLoyalty.setUser(createdUser);
+        userLoyaltyRepository.save(userLoyalty);
+        return createdUser;
     }
 
     @PutMapping("/{userId}")

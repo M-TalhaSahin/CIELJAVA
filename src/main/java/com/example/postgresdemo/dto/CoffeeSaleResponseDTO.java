@@ -10,16 +10,18 @@ public class CoffeeSaleResponseDTO {
     private CoffeeDTO coffee;
     private BrewDTO brew;
     private LocalDateTime saleDate;
+    private boolean isFree;
 
     public CoffeeSaleResponseDTO() {
     }
 
-    public CoffeeSaleResponseDTO(Long id, Long userId, CoffeeDTO coffee, BrewDTO brew, LocalDateTime saleDate) {
+    public CoffeeSaleResponseDTO(Long id, Long userId, CoffeeDTO coffee, BrewDTO brew, LocalDateTime saleDate, boolean isFree) {
         this.id = id;
         this.userId = userId;
         this.coffee = coffee;
         this.brew = brew;
         this.saleDate = saleDate;
+        this.isFree = isFree;
     }
 
     public static CoffeeSaleResponseDTO mapToResponseDTO(CoffeeSale coffeeSale) {
@@ -34,6 +36,7 @@ public class CoffeeSaleResponseDTO {
         responseDTO.setBrew(brewDTO);
 
         responseDTO.setSaleDate(coffeeSale.getSaleDate());
+        responseDTO.setFree(coffeeSale.isFree());
         return responseDTO;
     }
 
@@ -75,5 +78,13 @@ public class CoffeeSaleResponseDTO {
 
     public void setSaleDate(LocalDateTime saleDate) {
         this.saleDate = saleDate;
+    }
+
+    public boolean isFree() {
+        return isFree;
+    }
+
+    public void setFree(boolean free) {
+        isFree = free;
     }
 }

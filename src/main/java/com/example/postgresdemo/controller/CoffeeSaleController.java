@@ -10,6 +10,7 @@ import com.example.postgresdemo.repository.CoffeeSaleRepository;
 import com.example.postgresdemo.repository.CoffeeRepository;
 import com.example.postgresdemo.repository.BrewRepository;
 import com.example.postgresdemo.repository.UserRepository;
+import com.example.postgresdemo.service.UserLoyaltyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/coffee-sales")
+@CrossOrigin(origins = "http://localhost:3000")
 public class CoffeeSaleController {
 
     @Autowired
@@ -35,6 +37,9 @@ public class CoffeeSaleController {
 
     @Autowired
     private BrewRepository brewRepository;
+
+    @Autowired
+    private UserLoyaltyService userLoyaltyService;
 
     // Get all coffee sales
     @GetMapping
@@ -59,7 +64,6 @@ public class CoffeeSaleController {
     @PostMapping
     public ResponseEntity<CoffeeSaleResponseDTO> createCoffeeSale(@Valid @RequestBody CoffeeSale coffeeSale) {
         try {
-            // Check if the referenced entities (User, Brew, Coffee) exist
             User user = userRepository.findById(coffeeSale.getUser().getId())
                     .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + coffeeSale.getUser().getId()));
 
@@ -69,16 +73,17 @@ public class CoffeeSaleController {
             Brew brew = brewRepository.findById(coffeeSale.getBrew().getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Brew not found with id " + coffeeSale.getBrew().getId()));
 
-            // Set the validated entities and save CoffeeSale
             coffeeSale.setUser(user);
             coffeeSale.setCoffee(coffee);
             coffeeSale.setBrew(brew);
-            coffeeSale.setSaleDate(LocalDateTime.now()); // Set current timestamp as sale date
+            coffeeSale.setSaleDate(LocalDateTime.now());
 
             CoffeeSale savedCoffeeSale = coffeeSaleRepository.save(coffeeSale);
 
-            // Map CoffeeSale to CoffeeSaleResponseDTO and return
             CoffeeSaleResponseDTO responseDTO = CoffeeSaleResponseDTO.mapToResponseDTO(savedCoffeeSale);
+
+            userLoyaltyService.updateLoyaltyForSale(user.getId(), coffeeSale.isFree());
+
             return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
         } catch (ResourceNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

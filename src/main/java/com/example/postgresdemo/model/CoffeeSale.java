@@ -31,6 +31,9 @@ public class CoffeeSale extends AuditModel {
     @Column(name = "sale_date", nullable = false)
     private LocalDateTime saleDate;
 
+    @Column(name = "is_free", nullable = false)
+    private boolean isFree;
+
     // Constructors, getters, and setters
 
     public CoffeeSale() {
@@ -77,5 +80,13 @@ public class CoffeeSale extends AuditModel {
 
     public void setSaleDate(LocalDateTime saleDate) {
         this.saleDate = saleDate;
+    }
+
+    public boolean isFree() {
+        return isFree;
+    }
+
+    public void setFree(boolean free) {
+        isFree = free;
     }
 }
