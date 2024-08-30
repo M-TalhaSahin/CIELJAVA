@@ -2,16 +2,12 @@ package com.example.postgresdemo.controller;
 
 import com.example.postgresdemo.dto.CoffeeSaleResponseDTO;
 import com.example.postgresdemo.exception.ResourceNotFoundException;
-import com.example.postgresdemo.model.Brew;
-import com.example.postgresdemo.model.Coffee;
-import com.example.postgresdemo.model.CoffeeSale;
-import com.example.postgresdemo.model.User;
-import com.example.postgresdemo.repository.CoffeeSaleRepository;
-import com.example.postgresdemo.repository.CoffeeRepository;
-import com.example.postgresdemo.repository.BrewRepository;
-import com.example.postgresdemo.repository.UserRepository;
+import com.example.postgresdemo.model.*;
+import com.example.postgresdemo.repository.*;
 import com.example.postgresdemo.service.UserLoyaltyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +37,9 @@ public class CoffeeSaleController {
     @Autowired
     private UserLoyaltyService userLoyaltyService;
 
+    @Autowired
+    private UserLoyaltyRepository userLoyaltyRepository;
+
     // Get all coffee sales
     @GetMapping
     public List<CoffeeSale> getAllCoffeeSales() {
@@ -53,25 +52,34 @@ public class CoffeeSaleController {
         return coffeeSales.stream().map(CoffeeSaleResponseDTO::mapToResponseDTO).collect(Collectors.toList());
     }
 
-    // Get a specific coffee sale by ID
-    @GetMapping("/{coffeeSaleId}")
-    public CoffeeSale getCoffeeSaleById(@PathVariable Long coffeeSaleId) {
-        return coffeeSaleRepository.findById(coffeeSaleId)
-                .orElseThrow(() -> new ResourceNotFoundException("Coffee sale not found with id " + coffeeSaleId));
+    @GetMapping("/to-display/by-user/{userId}")
+    public List<CoffeeSaleResponseDTO> getLastCoffeeSalesByUserId(@PathVariable Long userId) {
+
+        // Fetch the UserLoyalty object
+        UserLoyalty userLoyalty = userLoyaltyRepository.findByUserId(userId).orElseThrow(() -> new ResourceNotFoundException("UserLoyalty not found for userId " + userId));
+
+        // Get the number of coffee sales to display from UserLoyalty
+        int numberOfCoffeeToDisplay = userLoyalty.getProgressBar();
+
+        // Define the Pageable object with limit and sorting
+        Pageable pageable = PageRequest.of(0, numberOfCoffeeToDisplay);
+
+        // Fetch the latest 'numberOfCoffeeToDisplay' coffee sales by userId
+        List<CoffeeSale> coffeeSales = coffeeSaleRepository.findLatestByUserId(userId, pageable);
+
+        // Map to DTO and return the list
+        return coffeeSales.stream().map(CoffeeSaleResponseDTO::mapToResponseDTO).collect(Collectors.toList());
     }
 
     // Create a new coffee sale
     @PostMapping
     public ResponseEntity<CoffeeSaleResponseDTO> createCoffeeSale(@Valid @RequestBody CoffeeSale coffeeSale) {
         try {
-            User user = userRepository.findById(coffeeSale.getUser().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + coffeeSale.getUser().getId()));
+            User user = userRepository.findById(coffeeSale.getUser().getId()).orElseThrow(() -> new ResourceNotFoundException("User not found with id " + coffeeSale.getUser().getId()));
 
-            Coffee coffee = coffeeRepository.findById(coffeeSale.getCoffee().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Coffee not found with id " + coffeeSale.getCoffee().getId()));
+            Coffee coffee = coffeeRepository.findById(coffeeSale.getCoffee().getId()).orElseThrow(() -> new ResourceNotFoundException("Coffee not found with id " + coffeeSale.getCoffee().getId()));
 
-            Brew brew = brewRepository.findById(coffeeSale.getBrew().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Brew not found with id " + coffeeSale.getBrew().getId()));
+            Brew brew = brewRepository.findById(coffeeSale.getBrew().getId()).orElseThrow(() -> new ResourceNotFoundException("Brew not found with id " + coffeeSale.getBrew().getId()));
 
             coffeeSale.setUser(user);
             coffeeSale.setCoffee(coffee);
@@ -88,33 +96,5 @@ public class CoffeeSaleController {
         } catch (ResourceNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-    }
-
-
-    // Update an existing coffee sale
-    @PutMapping("/{coffeeSaleId}")
-    public CoffeeSale updateCoffeeSale(@PathVariable Long coffeeSaleId,
-                                       @Valid @RequestBody CoffeeSale coffeeSaleRequest) {
-        return coffeeSaleRepository.findById(coffeeSaleId)
-                .map(coffeeSale -> {
-                    coffeeSale.setUser(userRepository.findById(coffeeSaleRequest.getUser().getId())
-                            .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + coffeeSaleRequest.getUser().getId())));
-                    coffeeSale.setCoffee(coffeeRepository.findById(coffeeSaleRequest.getCoffee().getId())
-                            .orElseThrow(() -> new ResourceNotFoundException("Coffee not found with id " + coffeeSaleRequest.getCoffee().getId())));
-                    coffeeSale.setBrew(brewRepository.findById(coffeeSaleRequest.getBrew().getId())
-                            .orElseThrow(() -> new ResourceNotFoundException("Brew not found with id " + coffeeSaleRequest.getBrew().getId())));
-                    coffeeSale.setSaleDate(LocalDateTime.now()); // Update sale date
-                    return coffeeSaleRepository.save(coffeeSale);
-                }).orElseThrow(() -> new ResourceNotFoundException("Coffee sale not found with id " + coffeeSaleId));
-    }
-
-    // Delete a coffee sale
-    @DeleteMapping("/{coffeeSaleId}")
-    public ResponseEntity<?> deleteCoffeeSale(@PathVariable Long coffeeSaleId) {
-        return coffeeSaleRepository.findById(coffeeSaleId)
-                .map(coffeeSale -> {
-                    coffeeSaleRepository.delete(coffeeSale);
-                    return ResponseEntity.ok().build();
-                }).orElseThrow(() -> new ResourceNotFoundException("Coffee sale not found with id " + coffeeSaleId));
     }
 }
