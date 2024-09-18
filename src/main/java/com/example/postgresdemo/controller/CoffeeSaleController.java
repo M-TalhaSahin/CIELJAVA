@@ -40,7 +40,6 @@ public class CoffeeSaleController {
     @Autowired
     private UserLoyaltyRepository userLoyaltyRepository;
 
-    // Get all coffee sales
     @GetMapping
     public List<CoffeeSale> getAllCoffeeSales() {
         return coffeeSaleRepository.findAll();
@@ -55,23 +54,17 @@ public class CoffeeSaleController {
     @GetMapping("/to-display/by-user/{userId}")
     public List<CoffeeSaleResponseDTO> getLastCoffeeSalesByUserId(@PathVariable Long userId) {
 
-        // Fetch the UserLoyalty object
         UserLoyalty userLoyalty = userLoyaltyRepository.findByUserId(userId).orElseThrow(() -> new ResourceNotFoundException("UserLoyalty not found for userId " + userId));
 
-        // Get the number of coffee sales to display from UserLoyalty
         int numberOfCoffeeToDisplay = userLoyalty.getProgressBar();
 
-        // Define the Pageable object with limit and sorting
         Pageable pageable = PageRequest.of(0, numberOfCoffeeToDisplay);
 
-        // Fetch the latest 'numberOfCoffeeToDisplay' coffee sales by userId
         List<CoffeeSale> coffeeSales = coffeeSaleRepository.findLatestByUserId(userId, pageable);
 
-        // Map to DTO and return the list
         return coffeeSales.stream().map(CoffeeSaleResponseDTO::mapToResponseDTO).collect(Collectors.toList());
     }
 
-    // Create a new coffee sale
     @PostMapping
     public ResponseEntity<CoffeeSaleResponseDTO> createCoffeeSale(@Valid @RequestBody CoffeeSale coffeeSale) {
         try {
