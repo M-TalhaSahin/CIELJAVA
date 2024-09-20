@@ -19,12 +19,12 @@ public class CoffeeController {
 
     @GetMapping
     public List<Coffee> getAllCoffees() {
-        return coffeeRepository.findAll();
+        return coffeeRepository.findAllActiveCoffees();
     }
 
     @GetMapping("/{coffeeId}")
     public Coffee getCoffeeById(@PathVariable Long coffeeId) {
-        return coffeeRepository.findById(coffeeId)
+        return coffeeRepository.findActiveCoffeeById(coffeeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Coffee not found with id " + coffeeId));
     }
 
@@ -36,7 +36,7 @@ public class CoffeeController {
     @PutMapping("/{coffeeId}")
     public Coffee updateCoffee(@PathVariable Long coffeeId,
                                @Valid @RequestBody Coffee coffeeRequest) {
-        return coffeeRepository.findById(coffeeId)
+        return coffeeRepository.findActiveCoffeeById(coffeeId)
                 .map(coffee -> {
                     coffee.setName(coffeeRequest.getName());
                     coffee.setDescription(coffeeRequest.getDescription());
@@ -48,9 +48,9 @@ public class CoffeeController {
 
     @DeleteMapping("/{coffeeId}")
     public ResponseEntity<?> deleteCoffee(@PathVariable Long coffeeId) {
-        return coffeeRepository.findById(coffeeId)
+        return coffeeRepository.findActiveCoffeeById(coffeeId)
                 .map(coffee -> {
-                    coffeeRepository.delete(coffee);
+                    coffeeRepository.softDeleteCoffee(coffeeId);
                     return ResponseEntity.ok().build();
                 }).orElseThrow(() -> new ResourceNotFoundException("Coffee not found with id " + coffeeId));
     }

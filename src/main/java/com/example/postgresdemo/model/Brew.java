@@ -20,7 +20,8 @@ public class Brew extends AuditModel {
     @Column(columnDefinition = "text")
     private String description;
 
-    // Additional fields as needed
+    @Column(nullable = false)
+    private boolean statustype = true;
 
     public Long getId() {
         return id;
@@ -44,5 +45,13 @@ public class Brew extends AuditModel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean getStatusType() {
+      return statustype;
+    }
+    
+    public void setStatusType(boolean statustype) {
+        this.statustype = statustype;
     }
 }

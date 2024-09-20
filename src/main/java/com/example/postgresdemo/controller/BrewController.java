@@ -19,12 +19,12 @@ public class BrewController {
 
     @GetMapping
     public List<Brew> getAllBrews() {
-        return brewRepository.findAll();
+        return brewRepository.findAllActiveBrews();
     }
 
     @GetMapping("/{brewId}")
     public Brew getBrewById(@PathVariable Long brewId) {
-        return brewRepository.findById(brewId)
+        return brewRepository.findActiveBrewById(brewId)
                 .orElseThrow(() -> new ResourceNotFoundException("Brew not found with id " + brewId));
     }
 
@@ -36,20 +36,19 @@ public class BrewController {
     @PutMapping("/{brewId}")
     public Brew updateBrew(@PathVariable Long brewId,
                            @Valid @RequestBody Brew brewRequest) {
-        return brewRepository.findById(brewId)
+        return brewRepository.findActiveBrewById(brewId)
                 .map(brew -> {
                     brew.setName(brewRequest.getName());
                     brew.setDescription(brewRequest.getDescription());
-                    // Update other fields as needed
                     return brewRepository.save(brew);
                 }).orElseThrow(() -> new ResourceNotFoundException("Brew not found with id " + brewId));
     }
 
     @DeleteMapping("/{brewId}")
     public ResponseEntity<?> deleteBrew(@PathVariable Long brewId) {
-        return brewRepository.findById(brewId)
+        return brewRepository.findActiveBrewById(brewId)
                 .map(brew -> {
-                    brewRepository.delete(brew);
+                    brewRepository.softDeleteBrew(brew.getId());
                     return ResponseEntity.ok().build();
                 }).orElseThrow(() -> new ResourceNotFoundException("Brew not found with id " + brewId));
     }

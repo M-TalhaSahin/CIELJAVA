@@ -24,12 +24,12 @@ public class UserController {
 
     @GetMapping
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return userRepository.findAllActiveUsers();
     }
 
     @GetMapping("/{userId}")
     public User getUserById(@PathVariable Long userId) {
-        return userRepository.findById(userId)
+        return userRepository.findActiveUserById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + userId));
     }
 
@@ -45,7 +45,7 @@ public class UserController {
     @PutMapping("/{userId}")
     public User updateUser(@PathVariable Long userId,
                            @Valid @RequestBody User userRequest) {
-        return userRepository.findById(userId)
+        return userRepository.findActiveUserById(userId)
                 .map(user -> {
                     user.setUsername(userRequest.getUsername());
                     user.setPassword(userRequest.getPassword());
@@ -56,9 +56,9 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
-        return userRepository.findById(userId)
+        return userRepository.findActiveUserById(userId)
                 .map(user -> {
-                    userRepository.delete(user);
+                    userRepository.softDeleteUser(userId);
                     return ResponseEntity.ok().build();
                 }).orElseThrow(() -> new ResourceNotFoundException("User not found with id " + userId));
     }

@@ -26,6 +26,9 @@ public class Coffee extends AuditModel {
     @Column(nullable = false)
     private int acidity;
 
+    @Column(nullable = false)
+    private boolean statustype = true;
+
     public Long getId() {
         return id;
     }
@@ -64,5 +67,13 @@ public class Coffee extends AuditModel {
 
     public void setAcidity(int acidity) {
         this.acidity = acidity;
+    }
+
+    public boolean getStatusType() {
+      return statustype;
+    }
+    
+    public void setStatusType(boolean statustype) {
+        this.statustype = statustype;
     }
 }

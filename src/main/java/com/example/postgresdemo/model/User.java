@@ -23,6 +23,9 @@ public class User extends AuditModel {
     @Column(nullable = false)
     private String fullname;
 
+    @Column(nullable = false)
+    private boolean statustype = true;
+
     public Long getId() {
         return id;
     }
@@ -53,5 +56,13 @@ public class User extends AuditModel {
 
     public void setFullname(String fullname) {
         this.fullname = fullname;
+    }
+
+    public boolean getStatusType() {
+      return statustype;
+    }
+    
+    public void setStatusType(boolean statustype) {
+        this.statustype = statustype;
     }
 }
