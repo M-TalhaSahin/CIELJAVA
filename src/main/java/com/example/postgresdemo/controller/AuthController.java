@@ -13,23 +13,23 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthController {
 
-    @Autowired
-    private JwtUtil jwtUtil;
+  @Autowired
+  private JwtUtil jwtUtil;
 
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
+  @Autowired
+  private CustomUserDetailsService userDetailsService;
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody AuthRequest authRequest) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
+  @PostMapping("/login")
+  public ResponseEntity<String> login(@RequestBody AuthRequest authRequest) {
+    UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getEmail());
 
-        if (userDetails != null && authRequest.getPassword().equals(userDetails.getPassword())) {
-            String token = jwtUtil.generateToken(userDetails.getUsername());
-            return ResponseEntity.ok(token);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
-        }
+    if (userDetails != null && authRequest.getPassword().equals(userDetails.getPassword())) {
+      String token = jwtUtil.generateToken(userDetails.getUsername()); // Burada getEmail() yerine getUsername()
+                                                                       // kullanıyoruz
+      return ResponseEntity.ok(token);
+    } else {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Email or password");
     }
+  }
 
 }
-

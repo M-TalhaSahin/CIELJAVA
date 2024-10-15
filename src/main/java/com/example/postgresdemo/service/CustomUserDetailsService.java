@@ -5,7 +5,7 @@ import com.example.postgresdemo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException; // Burada hala UsernameNotFoundException kullanacağız
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,12 +17,17 @@ public class CustomUserDetailsService implements UserDetailsService {
     private UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), new ArrayList<>());
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        // Optional<User> ile dönen sonucu kontrol ediyoruz.
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+        
+        // UserDetails objesini geri döndürüyoruz.
+        // Parola olmadığı için password alanı yerine boş bir string ("") kullanıyoruz.
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                "", // Parola olmadığı için boş string veriyoruz
+                new ArrayList<>() // Kullanıcının rollerini buraya ekleyebilirsiniz
+        );
     }
 }
-

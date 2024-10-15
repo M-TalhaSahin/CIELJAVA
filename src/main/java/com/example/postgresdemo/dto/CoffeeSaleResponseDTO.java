@@ -71,7 +71,7 @@ public class CoffeeSaleResponseDTO {
     public void setBrew(BrewDTO brew) {
         this.brew = brew;
     }
-
+    
     public LocalDateTime getSaleDate() {
         return saleDate;
     }

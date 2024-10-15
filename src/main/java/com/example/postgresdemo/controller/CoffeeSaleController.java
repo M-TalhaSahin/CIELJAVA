@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Collections;
 
 @RestController
 @RequestMapping("/coffee-sales")
@@ -41,9 +42,18 @@ public class CoffeeSaleController {
     private UserLoyaltyRepository userLoyaltyRepository;
 
     @GetMapping
-    public List<CoffeeSale> getAllCoffeeSales() {
-        return coffeeSaleRepository.findAll();
+public ResponseEntity<?> getAllCoffeeSales() {
+    try {
+        List<CoffeeSale> coffeeSales = coffeeSaleRepository.findAll();
+        List<CoffeeSaleResponseDTO> response = coffeeSales.stream()
+            .map(CoffeeSaleResponseDTO::mapToResponseDTO)
+            .collect(Collectors.toList());
+        return ResponseEntity.ok(response);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Collections.singletonMap("message", "Something went wrong"));
     }
+}
 
     @GetMapping("/by-user/{userId}")
     public List<CoffeeSaleResponseDTO> getCoffeeSalesByUserId(@PathVariable Long userId) {
