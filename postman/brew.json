@@ -55,7 +55,7 @@
                 ],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n    \"name\": \"Espresso\",\n    \"description\": \"Strong and rich coffee brew\"\n}"
+                    "raw": "{\n    \"name\": \"Type here brew method\",\n    \"description\": \"Description of brewing method will display here\"\n}"
                 },
                 "url": {
                     "raw": "http://localhost:8080/brews",
@@ -83,7 +83,7 @@
                 ],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n    \"name\": \"Latte\",\n    \"description\": \"Smooth and creamy coffee brew\"\n}"
+                    "raw": "{\n    \"name\": \"Type here brew method\",\n    \"description\": \"Description of brewing method will display here\"\n}"
                 },
                 "url": {
                     "raw": "http://localhost:8080/brews/1",

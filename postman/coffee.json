@@ -55,7 +55,7 @@
                 ],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n    \"name\": \"Espresso\",\n    \"description\": \"Strong and intense coffee\"\n}"
+                    "raw": "{\n    \"name\": \"Type here a coffee bean region\",\n    \"description\": \"Cupping notes of bean will display here\"\n}"
                 },
                 "url": {
                     "raw": "http://localhost:8080/coffees",
@@ -83,7 +83,7 @@
                 ],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n    \"name\": \"Latte\",\n    \"description\": \"Smooth and creamy coffee\"\n}"
+                    "raw": "{\n    \"name\": \"Type here a coffee bean region\",\n    \"description\": \"Cupping notes of bean will display here\"\n}"
                 },
                 "url": {
                     "raw": "http://localhost:8080/coffees/1",
